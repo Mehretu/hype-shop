@@ -1,15 +1,22 @@
 package com.vvs.hypeshop.service.product;
 
 import com.vvs.hypeshop.model.Product;
+import com.vvs.hypeshop.request.AddProductRequest;
+import com.vvs.hypeshop.request.ProductUpdateRequest;
 
 import java.util.List;
 
 public interface IProductService {
-    Product addProduct(Product product);
+    Product addProduct(AddProductRequest product);
     Product getProductById(Long id);
     void deleteProductById(Long id);
-    void updateProduct(Product product, Long productId);
+    Product updateProduct(ProductUpdateRequest request, Long productId);
     List<Product> getAllProducts();
 
-    List<Product> getProductsByCategory(Long categoryId);
+    List<Product> getProductsByCategory(String category);
+    List<Product> getProductsByBrand(String brand);
+    List<Product> getProductsByCategoryAndBrand(String category, String brand);
+    List<Product> getProductsByName(String name);
+    List<Product> getProductsByNameAndBrand(String name, String brand);
+    Long countProductsByBrandAndName(String brand, String name);
 }
