@@ -1,5 +1,6 @@
 package com.vvs.hypeshop.service.product;
 
+import com.vvs.hypeshop.dto.ProductDto;
 import com.vvs.hypeshop.model.Product;
 import com.vvs.hypeshop.request.AddProductRequest;
 import com.vvs.hypeshop.request.ProductUpdateRequest;
@@ -19,4 +20,8 @@ public interface IProductService {
     List<Product> getProductsByName(String name);
     List<Product> getProductsByNameAndBrand(String name, String brand);
     Long countProductsByBrandAndName(String brand, String name);
+
+    List<ProductDto> getConvertedProducts(List<Product> products);
+
+    ProductDto convertTODto(Product product);
 }

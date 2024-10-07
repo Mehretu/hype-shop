@@ -25,7 +25,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequiredArgsConstructor
 public class ImageController {
     private final IImageService imageService;
-
+    @PostMapping("/upload")
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files, @RequestParam Long productId) {
        try{
            List<ImageDto> imageDtos = imageService.saveImages(files, productId);
@@ -58,5 +58,21 @@ public class ImageController {
       }
       return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Update Error", INTERNAL_SERVER_ERROR));
     }
+
+    @DeleteMapping("image/{imageId}/delete")
+    public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
+        try{
+            Image image = imageService.getImageById(imageId);
+            if (image != null) {
+                imageService.deleteImageById( imageId);
+                return ResponseEntity.ok().body(new ApiResponse("Delete Success", null));
+            }
+        }catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+
+        }
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Delete Error", INTERNAL_SERVER_ERROR));
+    }
+
 
 }

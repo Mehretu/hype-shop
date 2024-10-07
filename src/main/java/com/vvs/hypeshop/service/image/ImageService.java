@@ -6,7 +6,6 @@ import com.vvs.hypeshop.exceptions.ResourceNotFoundException;
 import com.vvs.hypeshop.model.Image;
 import com.vvs.hypeshop.model.Product;
 import com.vvs.hypeshop.service.product.IProductService;
-import com.vvs.hypeshop.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,8 +55,8 @@ public class ImageService implements IImageService {
                 imageRepository.save(savedImage);
 
                 ImageDto imageDto = new ImageDto();
-                imageDto.setImageId(savedImage.getId());
-                imageDto.setImageName(savedImage.getFileName());
+                imageDto.setId(savedImage.getId());
+                imageDto.setFileName(savedImage.getFileName());
                 imageDto.setDownloadUrl(savedImage.getDownloadUrl());
                 savedImageDto.add(imageDto);
 

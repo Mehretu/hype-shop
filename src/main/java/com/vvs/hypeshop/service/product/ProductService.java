@@ -1,13 +1,18 @@
 package com.vvs.hypeshop.service.product;
 
 import com.vvs.hypeshop.Repository.CategoryRepository;
+import com.vvs.hypeshop.Repository.ImageRepository;
 import com.vvs.hypeshop.Repository.ProductRepository;
-import com.vvs.hypeshop.exceptions.ProductNotFoundException;
+import com.vvs.hypeshop.dto.ImageDto;
+import com.vvs.hypeshop.dto.ProductDto;
+import com.vvs.hypeshop.exceptions.ResourceNotFoundException;
 import com.vvs.hypeshop.model.Category;
+import com.vvs.hypeshop.model.Image;
 import com.vvs.hypeshop.model.Product;
 import com.vvs.hypeshop.request.AddProductRequest;
 import com.vvs.hypeshop.request.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +25,8 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
 
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
+    private final ImageRepository imageRepository;
 
     @Override
     public Product addProduct(AddProductRequest request) {
@@ -48,14 +55,14 @@ public class ProductService implements IProductService {
 
     @Override
     public Product getProductById(Long id) {
-        return productRepository.findById(id).orElseThrow(()-> new ProductNotFoundException("Product Not Found!"));
+        return productRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Product Not Found!"));
     }
 
     @Override
     public void deleteProductById(Long id) {
         productRepository.findById(id)
                 .ifPresentOrElse(productRepository::delete,
-                        () -> {throw new ProductNotFoundException("Product Not Found!");});
+                        () -> {throw new ResourceNotFoundException("Product Not Found!");});
 
     }
 
@@ -64,7 +71,7 @@ public class ProductService implements IProductService {
         return productRepository.findById(productId)
                 .map(existingProduct -> updateExistingProduct(existingProduct,request))
                 .map(productRepository :: save)
-                .orElseThrow(() -> new ProductNotFoundException("Product Not Found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product Not Found!"));
 
 
     }
@@ -92,7 +99,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByBrand(String brand) {
-        return productRepository.finByBrand(brand);
+        return productRepository.findByBrand(brand);
     }
 
     @Override
@@ -113,5 +120,19 @@ public class ProductService implements IProductService {
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand,name);
+    }
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products){
+        return products.stream().map(this::convertTODto).toList();
+    }
+    @Override
+    public ProductDto convertTODto(Product product){
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos = images.stream()
+                .map(image -> modelMapper.map(image,ImageDto.class))
+                .toList();
+        productDto.setImages(imageDtos);
+        return productDto;
     }
 }
