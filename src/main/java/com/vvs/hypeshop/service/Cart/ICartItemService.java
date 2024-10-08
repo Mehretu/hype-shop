@@ -1,5 +1,6 @@
 package com.vvs.hypeshop.service.Cart;
 
+import com.vvs.hypeshop.model.Cart;
 import com.vvs.hypeshop.model.CartItem;
 
 public interface ICartItemService {
