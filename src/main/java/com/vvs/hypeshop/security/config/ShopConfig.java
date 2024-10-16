@@ -1,4 +1,4 @@
-package com.vvs.hypeshop.Config;
+package com.vvs.hypeshop.security.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
