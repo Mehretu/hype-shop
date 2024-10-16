@@ -5,6 +5,7 @@ import com.vvs.hypeshop.Repository.ImageRepository;
 import com.vvs.hypeshop.Repository.ProductRepository;
 import com.vvs.hypeshop.dto.ImageDto;
 import com.vvs.hypeshop.dto.ProductDto;
+import com.vvs.hypeshop.exceptions.AlreadyExistsException;
 import com.vvs.hypeshop.exceptions.ResourceNotFoundException;
 import com.vvs.hypeshop.model.Category;
 import com.vvs.hypeshop.model.Image;
@@ -34,6 +35,9 @@ public class ProductService implements IProductService {
         // if yes set it as the new product category
         // if no then save it as a new category
         // then set it as the new product category
+        if(productExists(request.getName(),request.getBrand())){
+            throw new AlreadyExistsException(request.getBrand() + " " + request.getName() + " already exists");
+        }
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(() -> {
                     Category newCategory = new Category(request.getCategory().getName());
@@ -51,6 +55,10 @@ public class ProductService implements IProductService {
                 request.getDescription(),
                 category
         );
+    }
+
+    private boolean productExists(String name, String brand) {
+        return productRepository.existsByNameAndBrand(name,brand);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.vvs.hypeshop.controller;
 
 import com.vvs.hypeshop.dto.ProductDto;
+import com.vvs.hypeshop.exceptions.AlreadyExistsException;
 import com.vvs.hypeshop.exceptions.ResourceNotFoundException;
 import com.vvs.hypeshop.model.Product;
 import com.vvs.hypeshop.request.AddProductRequest;
@@ -13,8 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/products")
@@ -45,8 +45,8 @@ public class ProductController {
             Product theProduct = productService.addProduct(product);
             ProductDto productDto = productService.convertTODto(theProduct);
             return ResponseEntity.ok(new ApiResponse("Add product Success", productDto));
-        }catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(),null));
+        }catch (AlreadyExistsException e) {
+            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(),null));
         }
 
     }
